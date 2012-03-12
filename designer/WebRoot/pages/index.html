@@ -2,47 +2,46 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Process Designer</title>
+<script type="text/javascript" src="../scripts/jquery.js"></script>
+<script type="text/javascript" src="../scripts/schema/schema.js"></script>
+<script type="text/javascript" src="../scripts/schema/schema.basic.js"></script>
+<script type="text/javascript" src="../scripts/core.js"></script>
 <style type="text/css">
+html,body{
+	padding:0px; margin:0px;
+}
 .clear{
 	clear:both;
 }
-.node_bar{
-	border:1px solid #ccc;
+#designer{
+	width:100%;
+}
+#designer .layout{
+	float:left; border:1px solid red;
+}
+#shape_panel{
+	width:140px;
+}
+#shape_panel .content{
 	padding:10px;
 }
-.node_bar .node_item{
-	width:40px; height:40px; float:left;
+.panel_box{
+	width:27px; height:27px; display:inline-block;margin:2px;
+}
+.panel_item{
+	vertical-align: middle;
 }
 </style>
 <script type="text/javascript">
-function byId(id){
-	return document.getElementById(id);
-}
-function drawBarItems(){
-	var canvas = byId("process");
-	var ctx = canvas.getContext("2d");
-	ctx.lineWidth = 2;
-	ctx.beginPath();
-	ctx.moveTo(1,5);
-	ctx.lineTo(27,5);
-	ctx.lineTo(27,20);
-	ctx.lineTo(1,20);
-	ctx.closePath();
-	ctx.stroke();
-}
 </script>
 </head>
-<body onload="drawBarItems()">
-<div class="node_bar">
-	<div class="node_item">
-		<canvas id="process" width="40px" height="40px" onclick="alert(1)"></canvas>
+<body>
+<div id="designer">
+	<div id="shape_panel" class="layout">
 	</div>
-	<div class="node_item">
-		<canvas id="process" width="40px" height="40px"></canvas>
-	</div>
-	<div class="node_item">
-		
+	<div id="designer_canvas" class="layout">
+		123
 	</div>
 	<div class="clear"></div>
 </div>
