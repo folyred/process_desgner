@@ -5,8 +5,8 @@
 var schema = {
 	styles:{
 		shapeStyle: {
-			width: 80,
-			height: 80,
+			width: 100,
+			height: 100,
 			iconWidth: 27,
 			iconHeight: 27
 		},
@@ -20,8 +20,8 @@ var schema = {
 			through: false
 		},
 		lineStyle: {
-			lineColor: "#666666",
-			lineWidth: "2"
+			lineColor: "#333333",
+			lineWidth: 2
 		},
 		fillStyle: {
 			backgroundColor: "#FFFFFF"

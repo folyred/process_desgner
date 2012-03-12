@@ -31,18 +31,45 @@ designer.init = function(){
 	for(var key in schema.schemas){
 		var scm = $.extend(true, {}, schema.styles, schema.schemas[key]);
 		schema.schemas[key] = scm;
-		$("#panel_" + scm.category).append("<div class='panel_box'><canvas class='panel_item' width='27' height='20' shapeName='" + key + "'></canvas></div>");
+		var mtop = (27 - scm.shapeStyle.iconHeight) / 2;
+		$("#panel_" + scm.category).append("<div class='panel_box'><canvas class='panel_item' style='margin-top:"+mtop+"px' width='"+scm.shapeStyle.iconWidth+"' height='"+scm.shapeStyle.iconHeight+"' shapeName='" + key + "'></canvas></div>");
 	}
 	$(".panel_item").each(function(){
 		var name = $(this).attr("shapeName");
 		var canvas = $(this)[0];
-		var ctx = canvas.getContext("2d");
-		ctx.lineWidth = 1;
-		ctx.beginPath();
-		schema.schemas[name].draw(ctx, 26, 20);
-		ctx.closePath();
-		ctx.stroke();
+		designer.drawPanelItem(canvas, name);
 	});
+	var canvas = byId("test");
+	var ctx = canvas.getContext("2d");
+	var scm = schema.schemas["round"];
+	ctx.lineWidth = scm.lineStyle.lineWidth;
+	ctx.strokeStyle = scm.lineStyle.lineColor;
+	ctx.fillStyle = scm.fillStyle.backgroundColor;
+	
+	ctx.beginPath();
+	scm.draw(ctx, scm.shapeStyle.width, scm.shapeStyle.height, scm.lineStyle.lineWidth);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+};
+
+/**
+ * 绘制图形面板节点
+ * @param canvas
+ * @param schemeName
+ */
+designer.drawPanelItem = function(canvas, schemeName){
+	var ctx = canvas.getContext("2d");
+	var scm = schema.schemas[schemeName];
+	ctx.lineWidth = scm.lineStyle.lineWidth;
+	ctx.strokeStyle = scm.lineStyle.lineColor;
+	ctx.fillStyle = scm.fillStyle.backgroundColor;
+	
+	ctx.beginPath();
+	scm.draw(ctx, scm.shapeStyle.iconWidth, scm.shapeStyle.iconHeight, scm.lineStyle.lineWidth);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
 };
 
 
