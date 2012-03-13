@@ -6,36 +6,6 @@ function byId(id){
 	return document.getElementById(id);
 }
 
-(function($) {
-	
-	$.fn.draggable = function(options){
-		var defaults = {
-				target:$(this)
-		};
-		var opt = $.extend(defaults, options);
-		$(this).unbind("dragstart").bind("dragstart", function(){return false;});
-		$(this).unbind("mousedown.chartdrag").bind("mousedown.chartdrag", function(e){
-			$(document).unbind("selectstart").bind("selectstart", function(){return false;});
-			var downX = e.pageX;
-			var downY = e.pageY;
-			var downLeft = opt.target.offset().left;
-			var downTop = opt.target.offset().top;
-			$(document).bind("mousemove.chartdrag", function(e){
-				var offsetX = e.pageX - downX;
-				var offsetY = e.pageY - downY;
-				opt.target.offset({
-					left: downLeft + offsetX,
-					top: downTop + offsetY
-				});
-			});
-			$(document).unbind("mouseup.chartdrag")
-			.bind("mouseup.chartdrag", function(e){
-				$(document).unbind("selectstart");
-				$(document).unbind("mousemove.chartdrag");
-			});
-		});
-	};
-})(jQuery);
 
 $(function(){
 	designer.init();
@@ -48,6 +18,15 @@ designer.config = {
 	panelItemHeight: 25
 };
 
+designer.newId = function(){
+	var random = Math.round(Math.random() * 100000000);
+	var newId = (new Date().getTime() + random).toString(16);
+	return newId;
+};
+
+/**
+ * 初始化
+ */
 designer.init = function(){
 	//Init designer layout.
 	$(window).bind("resize.designer", function(){
@@ -70,6 +49,15 @@ designer.init = function(){
 		$("#panel_" + scm.category).append("<div class='panel_box'><canvas class='panel_item' width='"+(designer.config.panelItemWidth + scm.lineStyle.lineWidth)+"' height='"+(designer.config.panelItemHeight + scm.lineStyle.lineWidth)+"' shapeName='" + key + "'></canvas></div>");
 	}
 	//Draw panel node items
+	designer.drawPanelShapes();
+	
+	designer.shapeDraggable();
+};
+
+/**
+ * 绘制图形面板
+ */
+designer.drawPanelShapes = function(){
 	$(".panel_item").each(function(){
 		var shapeCanvas = $(this);
 		var name = shapeCanvas.attr("shapeName");
@@ -78,12 +66,16 @@ designer.init = function(){
 		//Bind creatable
 		shapeCanvas.bind("dragstart", function(){return false;});
 		shapeCanvas.bind("mousedown.createnode", function(e){
+			var currentShape = $(this);
 			$(document).bind("selectstart.createnode", function(){return false;});
 			var downX = e.pageX;
 			var downY = e.pageY;
 			var downLeft = shapeCanvas.offset().left;
 			var downTop = shapeCanvas.offset().top;
 			var createdShape;
+			var canvas = $("#designer_canvas");
+			var canvasleft = canvas.offset().left;
+			var canvastop = canvas.offset().top;
 			$(document).bind("mousemove.createnode", function(e){
 				var left = e.pageX - downX + downLeft;
 				var top = e.pageY - downY + downTop;
@@ -92,9 +84,6 @@ designer.init = function(){
 					top: top
 				});
 				//If drag to canvas
-				var canvas = $("#designer_canvas");
-				var canvasleft = canvas.offset().left;
-				var canvastop = canvas.offset().top;
 				if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
 					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
 					if(!createdShape){
@@ -111,13 +100,59 @@ designer.init = function(){
 				$(document).unbind("selectstart.createnode");
 				$(document).unbind("mousemove.createnode");
 				$(document).unbind("mouseup.createnode");
+				currentShape.css({
+					left: "0px",
+					top: "0px"
+				});
+				//鼠标up时，如果位置不正确，则删除已创建图形
+				if(e.pageX < canvasleft || e.pageX > canvasleft + canvas.width() 
+						|| e.pageY < canvas.offset().top || e.pageY > canvastop + canvas.height()){
+					createdShape.remove();
+				}
 			});
 		});
 	});
 };
 
+
 /**
- * 绘制图形面板节点
+ * 初始化形状拖动
+ */
+var index = 0;
+designer.shapeDraggable = function(){
+	var canvas = $("#designer_canvas");
+	var canvasleft = canvas.offset().left;
+	var canvastop = canvas.offset().top;
+	canvas.find("canvas").live("mousedown.shapedrag", function(e){
+		var currentShape = $(this);
+		$(document).bind("selectstart.shapedrag", function(){return false;});
+		
+		var downX = e.pageX;
+		var downY = e.pageY;
+		var downLeft = currentShape.offset().left;
+		var downTop = currentShape.offset().top;
+		
+		$(document).bind("mousemove.shapedrag", function(e){
+			if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
+					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
+				var left = e.pageX - downX + downLeft + "px";
+				var top = e.pageY - downY + downTop + "px";
+				currentShape.css({
+					left: left,
+					top: top
+				});
+			}
+		});
+		$(document).bind("mouseup.shapedrag", function(e){
+			$(document).unbind("selectstart.shapedrag");
+			$(document).unbind("mousemove.shapedrag");
+			$(document).unbind("mouseup.shapedrag");
+		});
+	});
+};
+
+/**
+ * 绘制图形面板图形
  * @param canvas
  * @param schemeName
  */
@@ -138,6 +173,13 @@ designer.drawPanelItem = function(canvas, schemaName){
 	ctx.stroke();
 };
 
+/**
+ * 创建形状
+ * @param schemaName
+ * @param centerX
+ * @param centerY
+ * @returns
+ */
 designer.createNode = function(schemaName, centerX, centerY){
 	var scm = schema.schemas[schemaName];
 	
@@ -161,7 +203,7 @@ designer.createNode = function(schemaName, centerX, centerY){
 	ctx.fill();
 	ctx.stroke();
 	return newShape;
-}
+};
 
 
 
