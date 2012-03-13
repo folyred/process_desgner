@@ -12,23 +12,22 @@ $.extend(schema.schemas, {
 		text: "Rectangle",
 		category: "basic",
 		draw: function(p, width, height, lineWidth){
-			p.moveTo(lineWidth / 2, lineWidth / 2);
-			p.lineTo(width - lineWidth / 2, lineWidth / 2);
-			p.lineTo(width - lineWidth / 2, height - lineWidth / 2);
-			p.lineTo(lineWidth / 2, height - lineWidth / 2);
+			p.moveTo(0, 0);
+			p.lineTo(width, 0);
+			p.lineTo(width, height);
+			p.lineTo(0, height);
 		},
 		shapeStyle: {
-			iconHeight: 20
+			iconHeight: 19
 		}
 	},
 	"round": {
 		text: "Round",
 		category: "basic",
 		draw: function(p, width, height, lineWidth){
-			//p.arc(width / 2, height / 2, width / 2 - lineWidth, 0, Math.PI*2, true);
-			p.moveTo(width / 2, lineWidth / 2);
-			p.bezierCurveTo(width - lineWidth / 2, lineWidth / 2, width - lineWidth / 2, height - lineWidth / 2, width/2, height - lineWidth / 2);
-			p.bezierCurveTo(lineWidth / 2, height - lineWidth / 2, lineWidth / 2, lineWidth / 2, width / 2, lineWidth / 2);
+			p.moveTo(0, height / 2);
+			p.bezierCurveTo(0, -height/6, width, -height/6, width, height / 2);
+			p.bezierCurveTo(width, height + height/6, 0, height + height/6, 0, height / 2);
 		}
 	}
 });

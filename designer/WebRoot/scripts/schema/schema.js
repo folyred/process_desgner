@@ -7,8 +7,8 @@ var schema = {
 		shapeStyle: {
 			width: 100,
 			height: 100,
-			iconWidth: 27,
-			iconHeight: 27
+			iconWidth: 25,
+			iconHeight: 25
 		},
 		fontStyle: {
 			fontColor: "#000000",
