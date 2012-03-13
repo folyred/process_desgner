@@ -18,7 +18,8 @@ $.extend(schema.schemas, {
 			p.lineTo(0, height);
 		},
 		shapeStyle: {
-			iconHeight: 19
+			iconHeight: 19,
+			height: 60
 		}
 	},
 	"round": {
