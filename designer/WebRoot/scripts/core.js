@@ -118,30 +118,33 @@ designer.drawPanelShapes = function(){
 /**
  * 初始化形状拖动
  */
-var index = 0;
 designer.shapeDraggable = function(){
 	var canvas = $("#designer_canvas");
 	var canvasleft = canvas.offset().left;
 	var canvastop = canvas.offset().top;
 	canvas.find("canvas").live("mousedown.shapedrag", function(e){
 		var currentShape = $(this);
+		var currentCtx = currentShape[0].getContext("2d");
 		$(document).bind("selectstart.shapedrag", function(){return false;});
 		
 		var downX = e.pageX;
 		var downY = e.pageY;
 		var downLeft = currentShape.offset().left;
 		var downTop = currentShape.offset().top;
-		
+		var i = 0;
 		$(document).bind("mousemove.shapedrag", function(e){
-			if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
-					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
-				var left = e.pageX - downX + downLeft + "px";
-				var top = e.pageY - downY + downTop + "px";
-				currentShape.css({
-					left: left,
-					top: top
-				});
+			if(currentCtx.isPointInPath(e.pageX - downLeft, e.pageY - downTop)){
+				$("#testinput").val(i++);
 			}
+//			if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
+//					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
+//				var left = e.pageX - downX + downLeft + "px";
+//				var top = e.pageY - downY + downTop + "px";
+//				currentShape.css({
+//					left: left,
+//					top: top
+//				});
+//			}
 		});
 		$(document).bind("mouseup.shapedrag", function(e){
 			$(document).unbind("selectstart.shapedrag");
