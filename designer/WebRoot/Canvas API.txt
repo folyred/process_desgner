@@ -1,0 +1,91 @@
+interface CanvasRenderingContext2D{ 
+// back-reference to the canvas 
+readonly attribute HTMLCanvasElement canvas; 
+// state 
+void restore(); // pop state stack and restore state 
+void save(); // push state on state stack 
+// transformations (default transform is the identity matrix) 
+void rotate(in float angle); 
+void scale(in float x, in float y); 
+void setTransform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy); 
+void transform(in float m11, in float m12, in float m21, in float m22, in float dx, in float dy); 
+void translate(in float x, in float y); 
+// compositing 
+attribute float globalAlpha; // (default 1.0) 
+attribute DOMString globalCompositeOperation; // (default source-over) 
+// colors and styles 
+attribute any fillStyle; // (default black) 
+attribute any strokeStyle; // (default black) 
+CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1); 
+CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1); 
+CanvasPattern createPattern(in HTMLImageElement image, in DOMString repetition); 
+CanvasPattern createPattern(in HTMLCanvasElement image, in DOMString repetition); 
+CanvasPattern createPattern(in HTMLVideoElement image, in DOMString repetition); 
+// line styles 
+attribute DOMString lineCap; // "butt", "round", "square" (default "butt") 
+attribute DOMString lineJoin; // "miter", "round", "bevel" (default "miter") 
+attribute float lineWidth; // (default 1) 
+attribute float miterLimit; // (default 10) 
+// shadows 
+attribute float shadowBlur; // (default 0) 
+attribute DOMString shadowColor; // (default transparent black) 
+attribute float shadowOffsetX; // (default 0) 
+attribute float shadowOffsetY; // (default 0) 
+// rects 
+void clearRect(in float x, in float y, in float w, in float h); 
+void fillRect(in float x, in float y, in float w, in float h); 
+void strokeRect(in float x, in float y, in float w, in float h); 
+// Complex shapes (paths) API 
+void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean anticlockwise); 
+void arcTo(in float x1, in float y1, in float x2, in float y2, in float radius); 
+void beginPath(); 
+void bezierCurveTo(in float cp1x, in float cp1y, in float cp2x, in float cp2y, in float x, in float y); 
+void clip(); 
+void closePath(); 
+void fill(); 
+void lineTo(in float x, in float y); 
+void moveTo(in float x, in float y); 
+void quadraticCurveTo(in float cpx, in float cpy, in float x, in float y); 
+void rect(in float x, in float y, in float w, in float h); 
+void stroke(); 
+boolean isPointInPath(in float x, in float y); 
+// text 
+attribute DOMString font; // (default 10px sans-serif) 
+attribute DOMString textAlign; // "start", "end", "left", "right", "center" (default: "start") 
+attribute DOMString textBaseline; // "top", "hanging", "middle", "alphabetic", "ideographic", "bottom" (default: "alphabetic") 
+void fillText(in DOMString text, in float x, in float y, optional in float maxWidth); 
+TextMetrics measureText(in DOMString text); 
+void strokeText(in DOMString text, in float x, in float y, optional in float maxWidth); 
+// drawing images 
+void drawImage(in HTMLImageElement image, in float dx, in float dy, optional in float dw, in float dh); 
+void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh); 
+void drawImage(in HTMLCanvasElement image, in float dx, in float dy, optional in float dw, in float dh); 
+void drawImage(in HTMLCanvasElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh); 
+void drawImage(in HTMLVideoElement image, in float dx, in float dy, optional in float dw, in float dh); 
+void drawImage(in HTMLVideoElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh); 
+// pixel manipulation 
+ImageData createImageData(in float sw, in float sh); 
+ImageData createImageData(in ImageData imagedata); 
+ImageData getImageData(in float sx, in float sy, in float sw, in float sh); 
+void putImageData(in ImageData imagedata, in float dx, in float dy, optional in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight); 
+}; 
+interface CanvasGradient{ 
+// opaque object 
+void addColorStop(in float offset, in DOMString color); 
+}; 
+interface CanvasPattern{ 
+// opaque object 
+}; 
+interface TextMetrics{ 
+readonly attribute float width; 
+}; 
+interface ImageData{ 
+readonly attribute CanvasPixelArray data; 
+readonly attribute unsigned long height; 
+readonly attribute unsigned long width; 
+}; 
+interface CanvasPixelArray{ 
+readonly attribute unsigned long length; 
+getter octet(in unsigned long index); 
+setter void(in unsigned long index, in octet value); 
+};

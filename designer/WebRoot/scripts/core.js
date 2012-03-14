@@ -193,7 +193,6 @@ designer.createNode = function(schemaName, centerX, centerY){
 	var translateX = scm.lineStyle.lineWidth / 2;
 	var translateY = scm.lineStyle.lineWidth / 2;
 	ctx.translate(translateX, translateY);
-	
 	ctx.lineWidth = scm.lineStyle.lineWidth;
 	ctx.strokeStyle = scm.lineStyle.lineColor;
 	ctx.fillStyle = scm.fillStyle.backgroundColor;
