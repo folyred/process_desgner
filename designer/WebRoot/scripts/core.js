@@ -51,7 +51,7 @@ designer.init = function(){
 	//Draw panel node items
 	designer.drawPanelShapes();
 	
-	designer.shapeDraggable();
+	designer.initShapeOperations();
 };
 
 /**
@@ -118,42 +118,47 @@ designer.drawPanelShapes = function(){
 /**
  * 初始化形状拖动
  */
-var index = 0;
-designer.shapeDraggable = function(){
+designer.initShapeOperations = function(){
 	var supercanvas = $("#designer_canvas");
 	var canvasleft = supercanvas.offset().left;
 	var canvastop = supercanvas.offset().top;
 	//绑定Hover时，显示移动还是连线
-	supercanvas.find("canvas").live("mouseover", function(){
+	supercanvas.find("canvas").live("mousemove", function(hoverEvent){
 		var currentShape = $(this);
-		
-	});
-	//绑定拖动
-	supercanvas.find("canvas").live("mousedown.shapedrag", function(e){
-		var currentShape = $(this);
-		$(document).bind("selectstart.shapedrag", function(){return false;});
-		
-		var downX = e.pageX;
-		var downY = e.pageY;
-		var downLeft = currentShape.offset().left;
-		var downTop = currentShape.offset().top;
-		
-		$(document).bind("mousemove.shapedrag", function(e){
-			if(e.pageX > canvasleft && e.pageX < canvasleft + supercanvas.width() 
-					&& e.pageY > supercanvas.offset().top && e.pageY < canvastop + supercanvas.height()){
-				var left = e.pageX - downX + downLeft + "px";
-				var top = e.pageY - downY + downTop + "px";
-				currentShape.css({
-					left: left,
-					top: top
+		var currentCtx = currentShape[0].getContext("2d");
+		var shapeX = currentShape.offset().left;
+		var shapeY = currentShape.offset().top;
+		if(currentCtx.isPointInPath(hoverEvent.pageX - shapeX, hoverEvent.pageY - shapeY)){
+			currentShape.css("cursor", "move");
+			//绑定拖动
+			currentShape.unbind("mousedown.shapedrag").bind("mousedown.shapedrag", function(downEvent){
+				$(document).bind("selectstart.shapedrag", function(){return false;});
+				
+				var downX = downEvent.pageX;
+				var downY = downEvent.pageY;
+				var downLeft = currentShape.offset().left;
+				var downTop = currentShape.offset().top;
+				$(document).bind("mousemove.shapedrag", function(moveEvent){
+					if(moveEvent.pageX > canvasleft && moveEvent.pageX < canvasleft + supercanvas.width() 
+							&& moveEvent.pageY > supercanvas.offset().top && moveEvent.pageY < canvastop + supercanvas.height()){
+						var left = moveEvent.pageX - downX + downLeft + "px";
+						var top = moveEvent.pageY - downY + downTop + "px";
+						currentShape.css({
+							left: left,
+							top: top
+						});
+					}
 				});
-			}
-		});
-		$(document).bind("mouseup.shapedrag", function(e){
-			$(document).unbind("selectstart.shapedrag");
-			$(document).unbind("mousemove.shapedrag");
-			$(document).unbind("mouseup.shapedrag");
-		});
+				$(document).bind("mouseup.shapedrag", function(){
+					$(document).unbind("selectstart.shapedrag");
+					$(document).unbind("mousemove.shapedrag");
+					$(document).unbind("mouseup.shapedrag");
+				});
+			});
+		}else{
+			currentShape.css("cursor", "default");
+			currentShape.unbind("mousedown.shapedrag")
+		}
 	});
 };
 
