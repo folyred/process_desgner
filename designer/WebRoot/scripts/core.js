@@ -213,12 +213,14 @@ designer.createNode = function(schemaName, centerX, centerY){
 	ctx.fill();
 	ctx.stroke();
 	
-//	ctx.font = "italic bold 13px Arial";
-//	ctx.fillStyle = "#000";
-//
-//	ctx.fillText ("司法看风景 类似的会计分录",10, 50);
-//	var measure = ctx.measureText("司法解释哦哦上看风景类似的会计分录");
-//	alert(measure.width);
+	//测试代码
+	ctx.font = "italic bold 13px Arial";
+	ctx.fillStyle = "#000";
+	ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+	ctx.fillText ("1 2 3 4 5 6 7 8 9 0", newShape.width() / 2 , newShape.height() / 2);
+	//测试代码end
+	
 	return newShape;
 };
 
