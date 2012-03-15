@@ -120,10 +120,16 @@ designer.drawPanelShapes = function(){
  */
 var index = 0;
 designer.shapeDraggable = function(){
-	var canvas = $("#designer_canvas");
-	var canvasleft = canvas.offset().left;
-	var canvastop = canvas.offset().top;
-	canvas.find("canvas").live("mousedown.shapedrag", function(e){
+	var supercanvas = $("#designer_canvas");
+	var canvasleft = supercanvas.offset().left;
+	var canvastop = supercanvas.offset().top;
+	//绑定Hover时，显示移动还是连线
+	supercanvas.find("canvas").live("mouseover", function(){
+		var currentShape = $(this);
+		
+	});
+	//绑定拖动
+	supercanvas.find("canvas").live("mousedown.shapedrag", function(e){
 		var currentShape = $(this);
 		$(document).bind("selectstart.shapedrag", function(){return false;});
 		
@@ -133,8 +139,8 @@ designer.shapeDraggable = function(){
 		var downTop = currentShape.offset().top;
 		
 		$(document).bind("mousemove.shapedrag", function(e){
-			if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
-					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
+			if(e.pageX > canvasleft && e.pageX < canvasleft + supercanvas.width() 
+					&& e.pageY > supercanvas.offset().top && e.pageY < canvastop + supercanvas.height()){
 				var left = e.pageX - downX + downLeft + "px";
 				var top = e.pageY - downY + downTop + "px";
 				currentShape.css({
