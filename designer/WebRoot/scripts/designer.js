@@ -55,20 +55,6 @@ designer.init = function(){
 };
 
 /**
- * 获取画布的相对坐标位置
- * @param {} pageX 相对屏幕的x坐标
- * @param {} pageY 相对屏幕的y坐标
- * @return {}
- */
-designer.getRelativeLocaltion = function(pageX, pageY){
-	var canvasOffset = $("#designer_canvas").offset();
-	return {
-		x: pageX - canvasOffset.left,
-		y: pageY - canvasOffset.top
-	};
-}
-
-/**
  * 绘制图形面板
  */
 designer.initPanelShapes = function(){
@@ -176,7 +162,7 @@ designer.initShapeOperations = function(){
 			});
 		}else{
 			currentShape.css("cursor", "default");
-			currentShape.unbind("mousedown.shapedrag")
+			currentShape.unbind("mousedown.shapedrag");
 		}
 	});
 };
