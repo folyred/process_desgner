@@ -2,16 +2,15 @@
  * 核心JS
  */
 
-function byId(id){
-	return document.getElementById(id);
-}
-
-
 $(function(){
 	designer.init();
 });
 
 var designer = function(){};
+
+designer.byId = function(id){
+	return document.getElementById(id);
+};
 
 designer.config = {
 	panelItemWidth: 25,
@@ -59,35 +58,23 @@ designer.init = function(){
  */
 designer.initPanelShapes = function(){
 	$(".panel_item").each(function(){
-		var shapeCanvas = $(this);
-		var name = shapeCanvas.attr("shapeName");
-		var canvas = shapeCanvas[0];
-		//绘制面板图形
+		var currentShape = $(this);
+		var name = currentShape.attr("shapeName");
+		var canvas = currentShape[0];
+		//绘制图形
 		designer.drawPanelItem(canvas, name);
-		//Bind creatable
-		shapeCanvas.bind("dragstart", function(){return false;});
-		shapeCanvas.bind("mousedown.createnode", function(e){
-			var currentShape = $(this);
-			$(document).bind("selectstart.createnode", function(){return false;});
-			var downX = e.pageX;
-			var downY = e.pageY;
-			var downLeft = shapeCanvas.offset().left;
-			var downTop = shapeCanvas.offset().top;
-			var createdShape;
-			var canvas = $("#designer_canvas");
-			var canvasleft = canvas.offset().left;
-			var canvastop = canvas.offset().top;
-			$(document).bind("mousemove.createnode", function(e){
-				var left = e.pageX - downX + downLeft;
-				var top = e.pageY - downY + downTop;
-				shapeCanvas.offset({
-					left: left,
-					top: top
-				});
-				//If drag to canvas
-				if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
-					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
-					var location = designer.getRelativeLocaltion(e.pageX, e.pageY);
+		var createdShape;
+		var designer_canvas = $("#designer_canvas");
+		var canvasleft = designer_canvas.offset().left;
+		var canvastop = designer_canvas.offset().top;
+		currentShape.draggable({
+			onstart: function(){
+				createdShape = null;
+			},
+			ondrag: function(shapex, shapey, x, y){
+				if(x > canvasleft && x < canvasleft + designer_canvas.width() 
+					&& y > canvastop && y < canvastop + designer_canvas.height()){
+					var location = $.getRelativePos(x, y, designer_canvas);
 					if(!createdShape){
 						createdShape = designer.createNode(name, location.x, location.y);
 					}else{
@@ -97,25 +84,66 @@ designer.initPanelShapes = function(){
 						});
 					}
 				}
-			});
-			$(document).bind("mouseup.createnode", function(e){
-				$(document).unbind("selectstart.createnode");
-				$(document).unbind("mousemove.createnode");
-				$(document).unbind("mouseup.createnode");
-				currentShape.css({
+			},
+			ondrop: function(){
+				$(this).css({
 					left: "0px",
 					top: "0px"
 				});
-				//鼠标up时，如果位置不正确，则删除已创建图形
-				if(e.pageX < canvasleft || e.pageX > canvasleft + canvas.width() 
-						|| e.pageY < canvas.offset().top || e.pageY > canvastop + canvas.height()){
-					createdShape.remove();
-				}else{
-					//初始化文本框
-					
-				}
-			});
+			}
 		});
+//		//Bind creatable
+//		shapeCanvas.bind("dragstart", function(){return false;});
+//		shapeCanvas.bind("mousedown.createnode", function(e){
+//			var currentShape = $(this);
+//			$(document).bind("selectstart.createnode", function(){return false;});
+//			var downX = e.pageX;
+//			var downY = e.pageY;
+//			var downLeft = shapeCanvas.offset().left;
+//			var downTop = shapeCanvas.offset().top;
+//			var createdShape;
+//			var canvas = $("#designer_canvas");
+//			var canvasleft = canvas.offset().left;
+//			var canvastop = canvas.offset().top;
+//			$(document).bind("mousemove.createnode", function(e){
+//				var left = e.pageX - downX + downLeft;
+//				var top = e.pageY - downY + downTop;
+//				shapeCanvas.offset({
+//					left: left,
+//					top: top
+//				});
+//				//If drag to canvas
+//				if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
+//					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
+//					var location = designer.getRelativeLocaltion(e.pageX, e.pageY, canvas);
+//					if(!createdShape){
+//						createdShape = designer.createNode(name, location.x, location.y);
+//					}else{
+//						createdShape.css({
+//							left: location.x - createdShape.width()/2 + "px",
+//							top: location.y - createdShape.height()/2 + "px"
+//						});
+//					}
+//				}
+//			});
+//			$(document).bind("mouseup.createnode", function(e){
+//				$(document).unbind("selectstart.createnode");
+//				$(document).unbind("mousemove.createnode");
+//				$(document).unbind("mouseup.createnode");
+//				currentShape.css({
+//					left: "0px",
+//					top: "0px"
+//				});
+//				//鼠标up时，如果位置不正确，则删除已创建图形
+//				if(e.pageX < canvasleft || e.pageX > canvasleft + canvas.width() 
+//						|| e.pageY < canvas.offset().top || e.pageY > canvastop + canvas.height()){
+//					createdShape.remove();
+//				}else{
+//					//初始化文本框
+//					
+//				}
+//			});
+//		});
 	});
 };
 
