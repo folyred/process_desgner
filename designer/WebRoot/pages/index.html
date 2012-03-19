@@ -33,13 +33,19 @@ html,body{
 	margin:0px auto;
 }
 #designer_canvas{
-	background:#ECECEC;
+	background:#ECECEC; position: relative;
 }
 #designer_canvas canvas{
 	position:absolute; 
 }
 </style>
 <script type="text/javascript">
+$(function(){
+	$("#test1123").css({
+		left: "20px",
+		top: "20px"
+	});
+});
 </script>
 </head>
 <body>
@@ -49,8 +55,10 @@ html,body{
 	<div id="designer_canvas" class="layout">
 	</div>
 	<div class="clear"></div>
-	123123<input type="text" style="border:0px;outline:none; margin-left:0px;"/>
 <!--	<div style="width:100px; height:20px; border:1px solid red;-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);">abcdef</div>-->
 </div>
+<div style="border:1px solid #ccc;position: relative; width:200px; height:50px;">
+		<div id="test1123" style="position:absolute;z-index:-1">sdf</div>
+	</div>
 </body>
 </html>

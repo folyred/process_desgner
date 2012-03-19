@@ -3,15 +3,17 @@
  */
 
 var schema = {
-	styles:{
+	defaultProps:{
+		iconWidth: 25,
+		iconHeight: 25,
 		shapeStyle: {
+			x: 0,
+			y: 0,
 			width: 100,
-			height: 100,
-			iconWidth: 25,
-			iconHeight: 25
+			height: 100
 		},
 		fontStyle: {
-			fontColor: "#000000",
+			color: "#000000",
 			fontFamily: "Arial",
 			fontSize: "12px",
 			weight: false,
@@ -25,6 +27,14 @@ var schema = {
 		},
 		fillStyle: {
 			backgroundColor: "#FFFFFF"
+		},
+		getTextBlock: function(width, height){
+			return {
+				x: 20,
+				y: 0,
+				width: width - 40,
+				height: height					
+			};
 		}
 	},
 	categories:[],

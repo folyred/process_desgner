@@ -44,24 +44,39 @@ designer.init = function(){
 	}
 	//Init toolbar items.
 	for(var key in schema.schemas){
-		var scm = $.extend(true, {}, schema.styles, schema.schemas[key]);
+		var scm = $.extend(true, {}, schema.defaultProps, schema.schemas[key]);
 		schema.schemas[key] = scm;
 		$("#panel_" + scm.category).append("<div class='panel_box'><canvas class='panel_item' width='"+(designer.config.panelItemWidth + scm.lineStyle.lineWidth)+"' height='"+(designer.config.panelItemHeight + scm.lineStyle.lineWidth)+"' shapeName='" + key + "'></canvas></div>");
 	}
 	//Draw panel node items
-	designer.drawPanelShapes();
+	designer.initPanelShapes();
 	
 	designer.initShapeOperations();
 };
 
 /**
+ * 获取画布的相对坐标位置
+ * @param {} pageX 相对屏幕的x坐标
+ * @param {} pageY 相对屏幕的y坐标
+ * @return {}
+ */
+designer.getRelativeLocaltion = function(pageX, pageY){
+	var canvasOffset = $("#designer_canvas").offset();
+	return {
+		x: pageX - canvasOffset.left,
+		y: pageY - canvasOffset.top
+	};
+}
+
+/**
  * 绘制图形面板
  */
-designer.drawPanelShapes = function(){
+designer.initPanelShapes = function(){
 	$(".panel_item").each(function(){
 		var shapeCanvas = $(this);
 		var name = shapeCanvas.attr("shapeName");
 		var canvas = shapeCanvas[0];
+		//绘制面板图形
 		designer.drawPanelItem(canvas, name);
 		//Bind creatable
 		shapeCanvas.bind("dragstart", function(){return false;});
@@ -86,12 +101,13 @@ designer.drawPanelShapes = function(){
 				//If drag to canvas
 				if(e.pageX > canvasleft && e.pageX < canvasleft + canvas.width() 
 					&& e.pageY > canvas.offset().top && e.pageY < canvastop + canvas.height()){
+					var location = designer.getRelativeLocaltion(e.pageX, e.pageY);
 					if(!createdShape){
-						createdShape = designer.createNode(name, e.pageX, e.pageY);
+						createdShape = designer.createNode(name, location.x, location.y);
 					}else{
 						createdShape.css({
-							left: e.pageX - createdShape.width()/2 + "px",
-							top: e.pageY - createdShape.height()/2 + "px"
+							left: location.x - createdShape.width()/2 + "px",
+							top: location.y - createdShape.height()/2 + "px"
 						});
 					}
 				}
@@ -108,6 +124,9 @@ designer.drawPanelShapes = function(){
 				if(e.pageX < canvasleft || e.pageX > canvasleft + canvas.width() 
 						|| e.pageY < canvas.offset().top || e.pageY > canvastop + canvas.height()){
 					createdShape.remove();
+				}else{
+					//初始化文本框
+					
 				}
 			});
 		});
@@ -170,15 +189,15 @@ designer.initShapeOperations = function(){
 designer.drawPanelItem = function(canvas, schemaName){
 	var ctx = canvas.getContext("2d");
 	var scm = schema.schemas[schemaName];
-	var translateX = (designer.config.panelItemWidth - scm.shapeStyle.iconWidth)/2 + scm.lineStyle.lineWidth / 2;
-	var translateY = (designer.config.panelItemHeight - scm.shapeStyle.iconHeight)/2 + scm.lineStyle.lineWidth / 2;
+	var translateX = (designer.config.panelItemWidth - scm.iconWidth)/2 + scm.lineStyle.lineWidth / 2;
+	var translateY = (designer.config.panelItemHeight - scm.iconHeight)/2 + scm.lineStyle.lineWidth / 2;
 	ctx.translate(translateX, translateY);
 	
 	ctx.lineWidth = scm.lineStyle.lineWidth;
 	ctx.strokeStyle = scm.lineStyle.lineColor;
 	ctx.fillStyle = scm.fillStyle.backgroundColor;
 	ctx.beginPath();
-	scm.draw(ctx, scm.shapeStyle.iconWidth, scm.shapeStyle.iconHeight);
+	scm.draw(ctx, scm.iconWidth, scm.iconHeight);
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
@@ -214,14 +233,27 @@ designer.createNode = function(schemaName, centerX, centerY){
 	ctx.stroke();
 	
 	//测试代码
-	ctx.font = "italic bold 13px Arial";
-	ctx.fillStyle = "#000";
-	ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-	ctx.fillText ("1 2 3 4 5 6 7 8 9 0", newShape.width() / 2 , newShape.height() / 2);
+//	ctx.font = "italic bold 13px Arial";
+//	ctx.fillStyle = "#000";
+//	ctx.textAlign = "center";
+//    ctx.textBaseline = "middle";
+//	ctx.fillText ("1 2 3 4 5 6 7 8 9 0", newShape.width() / 2 , newShape.height() / 2);
 	//测试代码end
-	
+//	scm.shapeStyle.x = centerX;
+//	scm.shapeStyle.y = centerY;
+//	designer.addTextBlock(newShape, scm, container);
 	return newShape;
+};
+
+designer.addTextBlock = function(shape, props, container){
+	var tb = $("<div></div>").appendTo(container);
+	tb.css(props.fontStyle);
+	alert(props.shapeStyle.x);
+	var tbProp = props.getTextBlock(props.shapeStyle);
+	tb.offset({
+		left: tbProp.x,
+		top: tbProp.y
+	}).html(props.text);
 };
 
 

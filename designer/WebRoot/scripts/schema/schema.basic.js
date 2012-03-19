@@ -17,8 +17,8 @@ $.extend(schema.schemas, {
 			p.lineTo(width, height);
 			p.lineTo(0, height);
 		},
+		iconHeight: 19,
 		shapeStyle: {
-			iconHeight: 19,
 			height: 60
 		}
 	},
