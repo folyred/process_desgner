@@ -28,7 +28,7 @@ html,body{
 	padding:10px; overflow: hidden;
 }
 .panel_box{
-	display:inline-block; margin:2px; vertical-align: middle;
+	display:inline-block; margin:2px; vertical-align: middle; width:27px; height:27px;
 }
 .panel_item{
 	margin:0px auto;
@@ -36,8 +36,11 @@ html,body{
 #designer_canvas{
 	background:#ECECEC; position: relative; overflow: auto;
 }
-#designer_canvas canvas{
-	position:absolute; 
+.shape_box{
+	position:absolute;
+}
+.text_block{
+	position:absolute; font: 13px Arial; cursor: text;
 }
 </style>
 <script type="text/javascript">
@@ -55,6 +58,6 @@ $(function(){
 	</div>
 	<div class="clear"></div>
 </div>
-		<div id="test1123" style="position:absolute;z-index:-1">sdf</div>
+		<div id="test1123" style="width:50px; height:200px; word-break:break-all;" contenteditable="true">sdf</div>
 </body>
 </html>
