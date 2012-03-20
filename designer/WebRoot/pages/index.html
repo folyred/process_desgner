@@ -34,7 +34,7 @@ html,body{
 	margin:0px auto;
 }
 #designer_canvas{
-	background:#ECECEC; position: relative;
+	background:#ECECEC; position: relative; overflow: auto;
 }
 #designer_canvas canvas{
 	position:absolute; 
@@ -51,12 +51,10 @@ $(function(){
 	<div id="shape_panel" class="layout">
 	</div>
 	<div id="designer_canvas" class="layout">
+		<div id="canvas_page" style="margin:20px;width:80%; height:900px; background:#fff"></div>
 	</div>
 	<div class="clear"></div>
-<!--	<div style="width:100px; height:20px; border:1px solid red;-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg); filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);">abcdef</div>-->
 </div>
-<div style="border:1px solid #ccc;position: relative; width:200px; height:50px;">
 		<div id="test1123" style="position:absolute;z-index:-1">sdf</div>
-	</div>
 </body>
 </html>

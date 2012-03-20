@@ -13,59 +13,54 @@
 	 */
 	$.getRelativePos = function(pageX, pageY, related){
 		var relatedOffset = related.offset();
+		if(relatedOffset == null){
+			relatedOffset = {left: 0, top: 0};
+		}
 		return {
-			x: pageX - relatedOffset.left,
-			y: pageY - relatedOffset.top
+			x: pageX - relatedOffset.left + related.scrollLeft(),
+			y: pageY - relatedOffset.top + related.scrollTop()
 		};
 	};
 	
 	$.fn.draggable = function(options){
+		if(typeof options == "string"){
+			if(options == "disable"){
+				$(this).unbind("dragstart");
+				$(this).unbind("mousedown.drag");
+			}
+			return;
+		}
 		var defaults = {
 			target: $(this),
-			relative: null
+			relative: $(document)
 		};
 		var opt = $.extend(defaults, options);
 		$(this).unbind("dragstart").bind("dragstart", function(){return false;});
-		$(this).unbind("mousedown.drag").bind("mousedown.drag", function(e){
+		$(this).unbind("mousedown.drag").bind("mousedown.drag", function(downE){
 			$(document).bind("selectstart", function(){return false;});
 			if(opt.onstart){
 				opt.onstart();
 			}
-			var downX = e.pageX;
-			var downY = e.pageY;
-			var downLeft = opt.target.offset().left;
-			var downTop = opt.target.offset().top;
-			$(document).bind("mousemove.drag", function(e){
-				var moveTo = {
-					x: e.pageX - downX + downLeft,
-					y: e.pageY - downY + downTop
-				};
-				if(opt.bounding){
-					var boundingleft = opt.bounding.offset().left;
-					var boundingtop = opt.bounding.offset().top;
-					if(moveTo.x < boundingleft && moveTo.y < boundingtop
-						&& moveTo.x > boundingleft + opt.bounding.outerWidth() - opt.target.outerWidth()
-						&& moveTo.y > boundingtop + opt.bounding.outerHeight() - opt.target.outerHeight()){
-						return false;
-					}
-				}
-				if(opt.relative){
-					moveTo = $.getRelativePos(moveTo.x, moveTo.y, opt.relative);
-				}
-				opt.target.offset({
-					left: moveTo.x,
-					top: moveTo.y
+			var downOffset = {
+				x: downE.pageX - opt.target.offset().left,
+				y: downE.pageY - opt.target.offset().top
+			};
+			opt.relative.bind("mousemove.drag", function(moveE){
+				var moveTo = $.getRelativePos(moveE.pageX - downOffset.x, moveE.pageY - downOffset.y, opt.relative);
+				opt.target.css({
+					left: moveTo.x + "px",
+					top: moveTo.y + "px"
 				});
 				if(opt.ondrag){
-					opt.ondrag.call(opt.target, moveTo.x, moveTo.y, e.pageX, e.pageY);
+					opt.ondrag.call(opt.target, moveTo.x, moveTo.y, moveE.pageX, moveE.pageY);
 				}
 			});
-			$(document).bind("mouseup.drag", function(e){
+			$(document).bind("mouseup.drag", function(upE){
 				if(opt.ondrop){
-					opt.ondrop.call(opt.target);
+					opt.ondrop.call(opt.target, upE.pageX, upE.pageY);
 				}
 				$(document).unbind("selectstart");
-				$(document).unbind("mousemove.drag");
+				opt.relative.unbind("mousemove.drag");
 				$(document).unbind("mouseup.drag");
 			});
 		});
