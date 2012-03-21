@@ -44,9 +44,9 @@ html,body{
 }
 </style>
 <script type="text/javascript">
-$(function(){
-
-});
+function toBold(){
+	document.execCommand("bold", false, null);
+}
 </script>
 </head>
 <body>
@@ -58,6 +58,11 @@ $(function(){
 	</div>
 	<div class="clear"></div>
 </div>
-		<div id="test1123" style="width:50px; height:200px; word-break:break-all;" contenteditable="true">sdf</div>
+<div>
+	<input value="Bold" type="button" onclick="toBold()"/>
+	<input value="Italic" type="button"/>
+	<input value="Underline" type="button"/>
+</div>
+<div id="test1123" style="overflow:hidden;width:200px; height:200px; word-break:break-all;word-wrap: break-word;" contenteditable="true">Hello World</div>
 </body>
 </html>

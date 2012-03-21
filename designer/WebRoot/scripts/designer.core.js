@@ -2,6 +2,7 @@
  * 核心JS
  */
 
+
 $(function(){
 	designer.init();
 });
@@ -196,6 +197,11 @@ designer.onShapeCreated = function(shapeBox){
 	designer.createTextBlock(shapeBox, props);
 };
 
+/**
+ * 创建文本框
+ * @param {} shapeBox
+ * @param {} props
+ */
 designer.createTextBlock = function(shapeBox, props){
 	var tb = $("<div class='text_block' contenteditable='true'></div>").appendTo(shapeBox);
 	var tbProps = props.getTextBlock(shapeBox.width(), shapeBox.height());
@@ -204,7 +210,11 @@ designer.createTextBlock = function(shapeBox, props){
 		top: tbProps.y + props.lineStyle.lineWidth/2,
 		width: tbProps.width - props.lineStyle.lineWidth,
 		height: tbProps.height - props.lineStyle.lineWidth
-	}).html(props.text).focus();
+	}).html(props.text);
+	tb.bind("focus", function(){
+		shapeBox.unbind("mousemove").draggable("disable");
+	});
+	tb.focus();
 };
 
 
