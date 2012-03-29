@@ -44,6 +44,26 @@ var schema = {
  * Init schema
  */
 schema.init = function(){
+	schema.defaults = {
+		name: "",
+		title: "",
+		inLinkers: [],
+		outLinkers: [],
+		group: "",
+		props: {
+			linkable: true,
+			x:0,
+			y:0,
+			w:100,
+			h:200
+		},
+		style: {
+			lineWidth: 2
+		},
+		textBlock: {
+			
+		}
+	};
 	schema.categories = [];
 	schema.schemas = {};
 };

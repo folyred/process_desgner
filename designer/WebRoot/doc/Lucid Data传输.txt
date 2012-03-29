@@ -1,0 +1,13 @@
+data[Document][pdfdata]:
+
+{"0_0":{"GridSpacing":20,"Width":1360,"Height":1760,"Margin":80,"IsMaster":false,"Master":null,"DPI":160,"Gradient":0.5,"FillColor":{"r":255,"g":255,"b":255,"a":1},"PhysicalPages":{"x":0,"y":0,"w":1,"h":1},"NoTextOverflow":false,"UseFontGroups":false,"DefaultTextSize":18,"IsTemplate":false,"Items":[{"id":"0JDoGZCN.CP.","Text":[{"BoundingBox":{"x":400,"y":80,"w":120,"h":120},"Name":"Text","Text":{"t":"Process","m":[{"s":0,"e":7,"n":"c","v":"000000ff"}]},"Align":"center","VAlign":"middle","Rotation":null,"obstacles":[],"Font":"Liberation Sans","TextTransform":null}],"RenderData":[{"BoundingBox":{"x":380,"y":80,"w":160,"h":120,"data":null}},{"FillColor":{"r":255,"g":255,"b":255,"a":1},"StrokeColor":{"r":0,"g":0,"b":0,"a":1},"LineWidth":2,"Actions":[{"Action":"move","x":"380.0","y":"85.0"},{"Action":"curve","Control":[{"x1":"380.0","y1":"82.2","x2":"382.2","y2":"80.0","x3":"385.0","y3":"80.0"}]},{"Action":"line","x":"535.0","y":"80.0"},{"Action":"curve","Control":[{"x1":"537.8","y1":"80.0","x2":"540.0","y2":"82.2","x3":"540.0","y3":"85.0"}]},{"Action":"line","x":"540.0","y":"195.0"},{"Action":"curve","Control":[{"x1":"540.0","y1":"197.8","x2":"537.8","y2":"200.0","x3":"535.0","y3":"200.0"}]},{"Action":"line","x":"385.0","y":"200.0"},{"Action":"curve","Control":[{"x1":"382.2","y1":"200.0","x2":"380.0","y2":"197.8","x3":"380.0","y3":"195.0"}]},{"Action":"close"}]}],"Crop":null,"BoundingBox":{"x":380,"y":80,"w":160,"h":120,"data":null},"Opacity":100,"Shadow":null,"Link":null,"Rotation":0}],"PageNumber":1,"PageTotal":1}}
+
+
+data[Document][state]:
+
+{"Properties":null,"Pages":{"0_0":{"Properties":null,"Groups":{},"Blocks":{"0JDoGZCN.CP.":{"Class":"ProcessBlock","Properties":{"BoundingBox":{"x":380,"y":80,"w":160,"h":120,"data":null},"LineColor":"#000000","FillColor":"#ffffff","StrokeStyle":"solid","LineWidth":2,"ZOrder":1,"TextAlign":"center","TextVAlign":"middle","Font":"Liberation Sans","Link":"","Opacity":100,"Lock":0,"InsetMargin":0,"Rotation":0,"ConPro":0,"BG":0,"Text":{"t":"Process","m":[{"s":0,"e":7,"n":"c","v":"000000ff"}]}}}},"Lines":{}}},"Groups":{},"Blocks":{}}
+
+
+data[Change][0][changes]:
+
+[{"Action":"CreateBlock","Class":"ProcessBlock","Properties":{"BoundingBox":{"x":380,"y":80,"w":160,"h":120,"data":null},"LineColor":"#000000","FillColor":"#ffffff","StrokeStyle":"solid","LineWidth":2,"ZOrder":1,"TextAlign":"center","TextVAlign":"middle","Font":"Liberation Sans","Link":"","Opacity":100,"Lock":0,"InsetMargin":0,"Rotation":0,"ConPro":0,"BG":0,"Text":{"t":"Process","m":[{"s":0,"e":7,"n":"c","v":"000000ff"}]}},"Page":"0_0","id":"0JDoGZCN.CP."}]

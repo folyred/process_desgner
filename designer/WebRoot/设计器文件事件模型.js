@@ -1,13 +1,13 @@
-ÊÂ¼şÀàĞÍ£º
-action:
-create update delete
+//äº‹ä»¶ç±»å‹ï¼š
+//action:
+//create update delete
 
-create: ½«¶ÔÏóÈÓ¹ıÈ¥
-update: ÉùÃ÷ĞŞ¸ÄÁËÄÄ¸öÊôĞÔ£¬ÒÔ¼°ÊôĞÔÖµ
-delete: ´«ID¼´¿É
+//create: å°†å¯¹è±¡æ‰”è¿‡å»
+//update: å£°æ˜ä¿®æ”¹äº†å“ªä¸ªå±æ€§ï¼Œä»¥åŠå±æ€§å€¼
+//delete: ä¼ IDå³å¯
 
-Shape½á¹¹¹æ»®£º
-{
+//Shapeç»“æ„è§„åˆ’ï¼š
+var shape = {
 	"id": {
 		name: "Process",
 		title: "",
@@ -16,8 +16,8 @@ Shape½á¹¹¹æ»®£º
 		outLinkers: [],
 		group: "groupId",
 		style: {
-			lineWidth: 2,
-			"..."
+			lineWidth: 2
+			//....
 		},
 		props: {
 			x:0,
@@ -34,8 +34,8 @@ Shape½á¹¹¹æ»®£º
 	}
 }
 
-ÎÄ¼ş¶¨Òå¹æ»®£º
-{
+//æ–‡ä»¶å®šä¹‰è§„åˆ’ï¼š
+var define = {
 	page: {
 		padding: 10,
 		showGrid: true,
@@ -55,8 +55,8 @@ Shape½á¹¹¹æ»®£º
 				outLinkers: [],
 				group: "groupId",
 				style: {
-					lineWidth: 2,
-					"..."
+					lineWidth: 2
+					//.....
 				},
 				props: {
 					x:0,
