@@ -81,7 +81,7 @@ designer.init = function(){
 	for(var key in schema.shapes){
 		var shape = $.extend(true, {}, schema.defaults, schema.shapes[key]);
 		schema.shapes[key] = shape;
-		$("#panel_" + shape.category).append("<div class='panel_box'><canvas class='panel_item' width='"+(designer.config.panelItemWidth)+"' height='"+(designer.config.panelItemHeight)+"' shapeName='" + key + "'></canvas></div>");
+		$("#panel_" + shape.category).append("<div class='panel_box' shapeName='" + key + "'><canvas class='panel_item' width='"+(designer.config.panelItemWidth)+"' height='"+(designer.config.panelItemHeight)+"'></canvas></div>");
 	}
 	//Draw panel node items
 	designer.initPanelShapes();
@@ -92,52 +92,48 @@ designer.init = function(){
  * 绘制图形面板
  */
 designer.initPanelShapes = function(){
-	$(".panel_item").each(function(){
+	$(".panel_box").each(function(){
 		var currentShape = $(this);
 		var name = currentShape.attr("shapeName");
-		var canvas = currentShape[0];
+		var canvas = currentShape.children()[0];
 		//绘制图形
 		designer.drawPanelItem(canvas, name);
-		var createdShape;
-		var designer_canvas = $("#designer_canvas");
-		var canvasleft = designer_canvas.offset().left;
-		var canvastop = designer_canvas.offset().top;
+		//给图片面板绑定Draggable，可创建图形
 		currentShape.draggable({
 			onstart: function(){
-				createdShape = null;
-			},
-			ondrag: function(shapex, shapey, x, y){
-				currentShape.css("position", "absolute");
-				if(x > canvasleft && x < canvasleft + designer_canvas.width() 
-					&& y > canvastop && y < canvastop + designer_canvas.height()){
-					var location = $.getRelativePos(x, y, designer_canvas);
-					if(!createdShape){
-						createdShape = designer.createNode(name, location.x, location.y);
-					}else{
-						createdShape.css({
-							"cursor": "move",
-							left: location.x - createdShape.width()/2 + "px",
-							top: location.y - createdShape.height()/2 + "px"
-						});
+				//currentShape.css("position", "absolute");
+				var createdShape = null;
+				var designer_canvas = $("#designer_canvas");
+				designer_canvas.bind("mousemove.create", function(e){
+					var location = $.getRelativePos(e.pageX, e.pageY, designer_canvas);
+					if(createdShape == null){
+						createdShape = designer.createShape(name, location.x, location.y);
 					}
-				}
+					createdShape.css({
+						"cursor": "move",
+						left: location.x - createdShape.width()/2 + "px",
+						top: location.y - createdShape.height()/2 + "px"
+					});
+				});
+				var created = false;
+				designer_canvas.bind("mouseup.create", function(e){
+					created = true;
+				});
+				$(document).bind("mouseup.create", function(){
+					$(this).unbind("mouseup.create");
+					designer_canvas.unbind("mouseup.create").unbind("mousemove.create");
+					if(created == false && createdShape != null){
+						createdShape.remove();
+					}else{
+						designer.onShapeCreated(createdShape);
+					}
+				});
 			},
 			ondrop: function(x, y){
 				$(this).css({
 					left: "0px",
-					top: "0px",
-					position: "relative"
+					top: "0px"
 				});
-				//鼠标up时，如果位置不正确，则删除已创建图形
-				if(x < canvasleft || x > canvasleft + designer_canvas.width() 
-						|| y < canvastop || y > canvastop + designer_canvas.height()){
-					if(createdShape){
-						createdShape.remove();
-					}
-				}else{
-					//形状创建后
-					designer.onShapeCreated(createdShape);
-				}
 			}
 		});
 	});
@@ -186,31 +182,29 @@ designer.drawPanelItem = function(canvas, shapeName){
  * @param centerY
  * @returns
  */
-designer.createNode = function(schemaName, centerX, centerY){
-	var scm = schema.schemas[schemaName];
+designer.createShape = function(shapeName, centerX, centerY){
+	var shape = schema.shapes[shapeName];
 	
-	var container = $("#designer_canvas");
-	var shapeWidth = scm.shapeStyle.width + scm.lineStyle.lineWidth;
-	var shapeHeight = scm.shapeStyle.height + scm.lineStyle.lineWidth;
-	var shapeBox = $("<div shapename='"+schemaName+"' class='shape_box' style='width:"+shapeWidth+"px; height:"+shapeHeight+"px'></div>").appendTo(container);
-	var newShape = $("<canvas width='"+shapeWidth+"' height='"+shapeHeight+"'></canvas>").appendTo(shapeBox);
-	var ctx = newShape[0].getContext("2d");
-	newShape.css({
-		left: centerX - scm.shapeStyle.width/2 + "px",
-		top: centerY - scm.shapeStyle.height/2 + "px"
+	var superCanvas = $("#designer_canvas");
+	var canvasWidth = shape.props.w * 2;
+	var canvasHeight = shape.props.h * 2;
+	var shapeBox = $("<div shapename='"+shapeName+"' class='shape_box'></div>").appendTo(superCanvas);
+	var canvas = $("<canvas width='"+canvasWidth+"' height='"+canvasHeight+"'></canvas>").appendTo(shapeBox);
+	var ctx = canvas[0].getContext("2d");
+	shapeBox.css({
+		left: centerX - canvasWidth/2 + "px",
+		top: centerY - canvasHeight/2 + "px"
 	});
-	var translateX = scm.lineStyle.lineWidth / 2;
-	var translateY = scm.lineStyle.lineWidth / 2;
-	ctx.translate(translateX, translateY);
-	ctx.lineWidth = scm.lineStyle.lineWidth;
-	ctx.strokeStyle = scm.lineStyle.lineColor;
-	ctx.fillStyle = scm.fillStyle.backgroundColor;
+	ctx.translate(shape.props.w/2, shape.props.h/2);
+	
+	ctx.lineWidth = shape.style.lineWidth;
+	ctx.strokeStyle = shape.style.lineColor;
+	ctx.fillStyle = shape.style.backgroundColor;
 	ctx.beginPath();
-	scm.draw(ctx, scm.shapeStyle.width, scm.shapeStyle.height);
-	ctx.closePath();
+	designer.renderer.renderPath(ctx, shape.getPath(shape.props));
 	ctx.fill();
 	ctx.stroke();
-	
+	return shapeBox;
 	//测试代码
 //	ctx.font = "italic bold 13px Arial";
 //	ctx.fillStyle = "#000";
@@ -221,7 +215,6 @@ designer.createNode = function(schemaName, centerX, centerY){
 //	scm.shapeStyle.x = centerX;
 //	scm.shapeStyle.y = centerY;
 //	designer.addTextBlock(newShape, scm, container);
-	return shapeBox;
 };
 
 /**
@@ -241,9 +234,9 @@ designer.onShapeCreated = function(shapeBox){
 		}
 	});
 	
-	var props = schema.schemas[shapeBox.attr("shapename")];
-	
-	designer.createTextBlock(shapeBox, props);
+//	var props = schema.schemas[shapeBox.attr("shapename")];
+//	
+//	designer.createTextBlock(shapeBox, props);
 };
 
 /**

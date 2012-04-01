@@ -31,8 +31,7 @@
 			return;
 		}
 		var defaults = {
-			target: $(this),
-			relative: $(document)
+			target: $(this)
 		};
 		var opt = $.extend(defaults, options);
 		$(this).unbind("dragstart").bind("dragstart", function(){return false;});
@@ -45,14 +44,25 @@
 				x: downE.pageX - opt.target.offset().left,
 				y: downE.pageY - opt.target.offset().top
 			};
-			opt.relative.bind("mousemove.drag", function(moveE){
-				var moveTo = $.getRelativePos(moveE.pageX - downOffset.x, moveE.pageY - downOffset.y, opt.relative);
-				opt.target.css({
-					left: moveTo.x + "px",
-					top: moveTo.y + "px"
-				});
+			var mouseMoveParent = $(document);
+			if(opt.relative){
+				mouseMoveParent = opt.relative;
+			}
+			mouseMoveParent.bind("mousemove.drag", function(moveE){
+				if(opt.relative){
+					var moveTo = $.getRelativePos(moveE.pageX - downOffset.x, moveE.pageY - downOffset.y, opt.relative);
+					opt.target.css({
+						left: moveTo.x + "px",
+						top: moveTo.y + "px"
+					});
+				}else{
+					opt.target.offset({
+						left: moveE.pageX - downOffset.x,
+						top: moveE.pageY - downOffset.y
+					});
+				}
 				if(opt.ondrag){
-					opt.ondrag.call(opt.target, moveTo.x, moveTo.y, moveE.pageX, moveE.pageY);
+					opt.ondrag.call(opt.target, moveE.pageX, moveE.pageY);
 				}
 			});
 			$(document).bind("mouseup.drag", function(upE){
@@ -60,7 +70,7 @@
 					opt.ondrop.call(opt.target, upE.pageX, upE.pageY);
 				}
 				$(document).unbind("selectstart");
-				opt.relative.unbind("mousemove.drag");
+				mouseMoveParent.unbind("mousemove.drag");
 				$(document).unbind("mouseup.drag");
 			});
 		});
