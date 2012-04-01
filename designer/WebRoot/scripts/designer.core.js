@@ -9,13 +9,48 @@ $(function(){
 
 var designer = function(){};
 
+/**
+ * 渲染器
+ */
+designer.renderer = {
+	actions: {
+		move: function(data){
+			this.moveTo(data.x, data.y);
+		},
+		line: function(data){
+			this.lineTo(data.x, data.y);
+		},
+		curve: function(data){
+			this.bezierCurveTo(data.cp1x, data.cp1y, data.cp2x, data.cp2y, data.x, data.y);
+		},
+		close: function(){
+			this.closePath();
+		}
+	}
+};
+
+/**
+ * 渲染路径
+ * @param {} ctx
+ * @param {} renderData
+ */
+designer.renderer.renderPath = function(ctx, renderPath){
+	for(var i = 0; i < renderPath.length; i++){
+		var path = renderPath[i];
+		this.actions[path.action].call(ctx, path);
+	}
+};
+
 designer.byId = function(id){
 	return document.getElementById(id);
 };
 
+/**
+ * The Designer Core Config
+ */
 designer.config = {
-	panelItemWidth: 25,
-	panelItemHeight: 25
+	panelItemWidth: 27,
+	panelItemHeight: 27
 };
 
 designer.newId = function(){
@@ -43,10 +78,10 @@ designer.init = function(){
 		$("#shape_panel").append("<h3 class='panel_title'>" + cate.text + "</h3><div id='panel_" + cate.name + "' class='content'></div>");
 	}
 	//Init toolbar items.
-	for(var key in schema.schemas){
-		var scm = $.extend(true, {}, schema.defaultProps, schema.schemas[key]);
-		schema.schemas[key] = scm;
-		$("#panel_" + scm.category).append("<div class='panel_box'><canvas class='panel_item' width='"+(designer.config.panelItemWidth + scm.lineStyle.lineWidth)+"' height='"+(designer.config.panelItemHeight + scm.lineStyle.lineWidth)+"' shapeName='" + key + "'></canvas></div>");
+	for(var key in schema.shapes){
+		var shape = $.extend(true, {}, schema.defaults, schema.shapes[key]);
+		schema.shapes[key] = shape;
+		$("#panel_" + shape.category).append("<div class='panel_box'><canvas class='panel_item' width='"+(designer.config.panelItemWidth)+"' height='"+(designer.config.panelItemHeight)+"' shapeName='" + key + "'></canvas></div>");
 	}
 	//Draw panel node items
 	designer.initPanelShapes();
@@ -113,19 +148,33 @@ designer.initPanelShapes = function(){
  * @param canvas
  * @param schemeName
  */
-designer.drawPanelItem = function(canvas, schemaName){
+designer.drawPanelItem = function(canvas, shapeName){
 	var ctx = canvas.getContext("2d");
-	var scm = schema.schemas[schemaName];
-	var translateX = (designer.config.panelItemWidth - scm.iconWidth)/2 + scm.lineStyle.lineWidth / 2;
-	var translateY = (designer.config.panelItemHeight - scm.iconHeight)/2 + scm.lineStyle.lineWidth / 2;
+	var shape = schema.shapes[shapeName];
+	var props = {
+		w: shape.props.w,
+		h: shape.props.h
+	};
+	//计算图标的宽高以及位移
+	if(shape.props.w > shape.props.h){
+		props.w = designer.config.panelItemWidth - shape.style.lineWidth * 2;
+		props.h = parseInt(shape.props.h / shape.props.w * props.w);
+	}else if(shape.props.w < shape.props.h){
+		props.h = designer.config.panelItemHeight - shape.style.lineWidth * 2;
+		props.w = parseInt(shape.props.w / shape.props.h * props.h);
+	}else{
+		props.h = designer.config.panelItemWidth - shape.style.lineWidth * 2;
+		props.w = designer.config.panelItemHeight - shape.style.lineWidth * 2;
+	}
+	var translateX = (designer.config.panelItemWidth - props.w)/2;
+	var translateY = (designer.config.panelItemHeight - props.h)/2;
 	ctx.translate(translateX, translateY);
 	
-	ctx.lineWidth = scm.lineStyle.lineWidth;
-	ctx.strokeStyle = scm.lineStyle.lineColor;
-	ctx.fillStyle = scm.fillStyle.backgroundColor;
+	ctx.lineWidth = shape.style.lineWidth;
+	ctx.strokeStyle = shape.style.lineColor;
+	ctx.fillStyle = shape.style.backgroundColor;
 	ctx.beginPath();
-	scm.draw(ctx, scm.iconWidth, scm.iconHeight);
-	ctx.closePath();
+	designer.renderer.renderPath(ctx, shape.getPath(props));
 	ctx.fill();
 	ctx.stroke();
 };

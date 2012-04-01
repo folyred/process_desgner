@@ -3,67 +3,53 @@
  */
 
 var schema = {
-	defaultProps:{
-		iconWidth: 25,
-		iconHeight: 25,
-		shapeStyle: {
-			x: 0,
-			y: 0,
-			width: 100,
-			height: 100
-		},
-		fontStyle: {
-			color: "#000000",
-			fontFamily: "Arial",
-			fontSize: "12px",
-			weight: false,
-			italic: false,
-			underLine: false,
-			through: false
-		},
-		lineStyle: {
-			lineColor: "#333333",
-			lineWidth: 2
-		},
-		fillStyle: {
-			backgroundColor: "#FFFFFF"
-		},
-		getTextBlock: function(width, height){
-			return {
-				x: 20,
-				y: 0,
-				width: width - 40,
-				height: height					
-			};
-		}
-	},
-	categories:[],
-	schemas: {}
+	
+	/**
+	 * Init schema
+	 * getTextBlock
+	 * getAnchors
+	 * getRender (No defaults)
+	 */
+	init: function(){
+		schema.defaults = {
+			name: "",
+			text: "",
+			category: "",
+			inLinkers: [],
+			outLinkers: [],
+			group: "",
+			props: {
+				linkable: true,
+				editable: true,
+				x:0,
+				y:0,
+				w:120,
+				h:80
+			},
+			style: {
+				lineWidth: 2,
+				lineColor: "#333",
+				backgroundColor: "#FFFFFF"
+			},
+			getTextBlock: function(props){
+				return null;
+			},
+			getAnchors: function() {
+				return [{x:.5,y:0}, {x:.5,y:1}, {x:0,y:.5}, {x:1,y:.5}];
+			}
+		};
+		schema.categories = [];
+		schema.shapes = {};
+		//Add a category
+		schema.categories.add = function(category){
+			this.push(category)
+		};
+		//Add a shape
+		schema.shapes.add = function(shape){
+			this[shape.name] = shape;
+		};
+	}
 };
-/**
- * Init schema
- */
-schema.init = function(){
-	schema.defaults = {
-		name: "",
-		title: "",
-		inLinkers: [],
-		outLinkers: [],
-		group: "",
-		props: {
-			linkable: true,
-			x:0,
-			y:0,
-			w:100,
-			h:200
-		},
-		style: {
-			lineWidth: 2
-		},
-		textBlock: {
-			
-		}
-	};
-	schema.categories = [];
-	schema.schemas = {};
-};
+
+schema.init();
+
