@@ -23,10 +23,10 @@ var designer = {
 		getDomById: function(id){
 			return document.getElementById(id);
 		},
-		newId: function(){
-			var random = Math.round(Math.random() * 100000000);
-			var newId = (new Date().getTime() + random).toString(16);
-			return newId;
+		newId: function(c1, c2){
+			var random = Math.random();
+			var newId = (random + new Date().getTime());
+			return newId.toString(16).replace(".", "");
 		}
 	},
 	/**
@@ -148,27 +148,12 @@ var designer = {
 		 * @returns
 		 */
 		function createShape(shapeName, centerX, centerY){
+			var newId = designer.util.newId();
 			var shape = schema.shapes[shapeName];
-			
-			var superCanvas = $("#designer_canvas");
-			var canvasWidth = shape.props.w * 2;
-			var canvasHeight = shape.props.h * 2;
-			var shapeBox = $("<div shapename='"+shapeName+"' class='shape_box'></div>").appendTo(superCanvas);
-			var canvas = $("<canvas width='"+canvasWidth+"' height='"+canvasHeight+"'></canvas>").appendTo(shapeBox);
-			var ctx = canvas[0].getContext("2d");
-			shapeBox.css({
-				left: centerX - canvasWidth/2 + "px",
-				top: centerY - canvasHeight/2 + "px"
-			});
-			ctx.translate(shape.props.w/2, shape.props.h/2);
-			
-			ctx.lineWidth = shape.style.lineWidth;
-			ctx.strokeStyle = shape.style.lineColor;
-			ctx.fillStyle = shape.style.backgroundColor;
-			ctx.beginPath();
-			designer.painter.renderPath(ctx, shape.getPath(shape.props));
-			ctx.fill();
-			ctx.stroke();
+			shape.props.x = centerX - shape.props.w / 2;
+			shape.props.y = centerY - shape.props.h / 2;
+			var shapeBox = designer.painter.appendShape(newId, shape, designer.model.maxZIndex + 1);
+			designer.painter.renderShape(newId, shape);
 			return shapeBox;
 		}
 		/**
@@ -220,8 +205,9 @@ var designer = {
 	 * @type {}
 	 */
 	model: {
-		shapeList: [],
-		define: {}
+		orderList: [],
+		define: {},
+		maxZIndex: 0
 	},
 	/**
 	 * 绘制器
@@ -254,6 +240,41 @@ var designer = {
 				var path = renderPath[i];
 				this.actions[path.action].call(ctx, path);
 			}
+		},
+		/**
+		 * 添加形状
+		 * @param {} shapeId
+		 * @param {} shapeObj
+		 * @return {}
+		 */
+		appendShape: function(shapeId, shapeObj, zindex){
+			var superCanvas = $("#designer_canvas");
+			var canvasWidth = shapeObj.props.w * 2;
+			var canvasHeight = shapeObj.props.h * 2;
+			var shapeBox = $("<div id='"+shapeId+"' shapename='"+shapeObj.name+"' class='shape_box'><canvas class='shape_canvas' width='"+canvasWidth+"' height='"+canvasHeight+"'></canvas></div>").appendTo(superCanvas);
+			shapeBox.css({
+				left: shapeObj.props.x - shapeObj.props.x/2 + "px",
+				top: shapeObj.props.y - shapeObj.props.y/2 + "px",
+				"z-index": zindex
+			});
+			return shapeBox;
+		},
+		/**
+		 * 绘制形状
+		 * @param {} shapeObj
+		 */
+		renderShape: function(shapeId, shape){
+			var shapeBox = $("#" + shapeId);
+			var ctx = shapeBox.find(".shape_canvas")[0].getContext("2d");
+			ctx.translate(shape.props.w/2, shape.props.h/2);
+			
+			ctx.lineWidth = shape.style.lineWidth;
+			ctx.strokeStyle = shape.style.lineColor;
+			ctx.fillStyle = shape.style.backgroundColor;
+			ctx.beginPath();
+			this.renderPath(ctx, shape.getPath(shape.props));
+			ctx.fill();
+			ctx.stroke();
 		}
 	}
 };
@@ -287,7 +308,16 @@ var designer = {
  * 添加设计器方法函数
  */
 designer.addFunction("open", function(definition){
- 	
+ 	designer.model.define = definition;
+ 	var shapes = definition.elements.shapes;
+ 	designer.model.orderList = [];
+ 	for(var shapeId in shapes){
+ 		var shape = shapes[shapeId];
+ 		designer.model.orderList.push({id: shapeId, zindex: shape.props.zindex});
+ 	}
+ 	designer.model.orderList.sort(function compare(a, b){
+ 		return a.zindex - b.zindex;
+ 	});
 });
 
 
